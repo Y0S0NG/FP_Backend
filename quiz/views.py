@@ -56,10 +56,11 @@ def submit_quiz(request):
                 continue
 
     # Save the result
-    result = Result(user=user, groups=groups)
+    result = Result(user=user)
+    result.set_groups(groups)
+    result.update_tendency()  # 更新tendency
     result.save()
     return Response({'message': 'Quiz submitted successfully'}, status=status.HTTP_201_CREATED)
-
 
 
 class QuestionViewSet(viewsets.ModelViewSet):

@@ -21,14 +21,26 @@ class Choice(models.Model):
 class Result(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     groups = models.TextField()  # Store list of groups as a comma-separated string
+    tendency = models.TextField(blank=True)  # 新增字段
 
     def set_groups(self, groups_list):
-        self.groups = ",".join(groups_list)
+        self.groups = ",".join([group.strip() for group in groups_list])
 
     def get_groups(self):
-        return self.groups.split(",")
+        return [group.strip() for group in self.groups.split(",")]
+
+    def update_tendency(self):
+        group_list = self.get_groups()
+        group_frequency = {}
+        for group in group_list:
+            if group in group_frequency:
+                group_frequency[group] += 1
+            else:
+                group_frequency[group] = 1
+        sorted_groups = sorted(group_frequency.items(), key=lambda x: x[1], reverse=True)
+        self.tendency = ",".join([group for group, freq in sorted_groups])
 
     def __str__(self):
-        return f'{self.user.username} - {self.groups}'
+        return f'{self.user.username} - {self.groups} - {self.tendency}'
 
 
