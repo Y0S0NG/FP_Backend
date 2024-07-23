@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 
 class Question(models.Model):
     text = models.TextField()
+    is_multiple_choice = models.BooleanField(default=False)  # 新增字段
+
 
     def __str__(self):
         return self.text
