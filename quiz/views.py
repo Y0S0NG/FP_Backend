@@ -37,11 +37,21 @@ def submit_quiz(request):
     user = request.user
     # 检查是否已经存在该用户的结果
     if Result.objects.filter(user=user).exists():
-        return Response({'error': 'You have already submitted the quiz.'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': '你已经提交过一次问卷了～'}, status=status.HTTP_400_BAD_REQUEST)
 
     answers = request.data.get('answers', {})
     if not answers:
-        return Response({'error': 'No answers provided'}, status=status.HTTP_400_BAD_REQUEST)
+        return Response({'error': '没有完成任何问题～'}, status=status.HTTP_400_BAD_REQUEST)
+
+    # 获取所有问题的ID
+    question_ids = set(Question.objects.values_list('id', flat=True))
+
+    # 检查是否所有问题都提供了答案
+    answered_question_ids = set(answers.keys())
+    if question_ids != answered_question_ids:
+        missing_question_ids = question_ids - answered_question_ids
+        return Response({'error': '请确保回答完所有问题～'},
+                        status=status.HTTP_400_BAD_REQUEST)
 
     # Collect the groups from the choices
     groups = []
