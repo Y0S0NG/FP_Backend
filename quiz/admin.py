@@ -8,7 +8,7 @@ class ChoiceInline(admin.TabularInline):
 
 class QuestionAdmin(admin.ModelAdmin):
     fieldsets = [
-        (None, {'fields': ['text']}),
+        (None, {'fields': ['text', 'is_multiple_choice']}),
     ]
     inlines = [ChoiceInline]
 
