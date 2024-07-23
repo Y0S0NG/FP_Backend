@@ -45,16 +45,18 @@ def submit_quiz(request):
 
     # Collect the groups from the choices
     groups = []
-    for question_id, choice_id in answers.items():
-        try:
-            choice = Choice.objects.get(id=choice_id)
-            groups.append(choice.group)
-        except Choice.DoesNotExist:
-            continue
+    for question_id, choice_ids in answers.items():
+        if not isinstance(choice_ids, list):
+            choice_ids = [choice_ids]
+        for choice_id in choice_ids:
+            try:
+                choice = Choice.objects.get(id=choice_id)
+                groups.append(choice.group)
+            except Choice.DoesNotExist:
+                continue
 
     # Save the result
-    result = Result(user=user)
-    result.set_groups(list(groups))
+    result = Result(user=user, groups=groups)
     result.save()
     return Response({'message': 'Quiz submitted successfully'}, status=status.HTTP_201_CREATED)
 
