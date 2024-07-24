@@ -48,7 +48,7 @@ def submit_quiz(request):
 
     # 检查是否所有问题都提供了答案
     answered_question_ids = set(answers.keys())
-    if question_ids != answered_question_ids:
+    if len(question_ids) != len(answered_question_ids):
         missing_question_ids = question_ids - answered_question_ids
         return Response({'error': '请确保回答完所有问题～'},
                         status=status.HTTP_400_BAD_REQUEST)
